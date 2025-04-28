@@ -1,0 +1,50 @@
+---
+title: "STAT301 Final Project"
+author: "Max Byrne"
+date: "2025-04-11"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(multcomp)
+
+```
+
+```{r}
+
+studs <- read.csv("C:/Users/Max Byrne/OneDrive - Minnesota State/Desktop/School/Spring 2025/STAT301/Project/StudentPerformanceFactors.csv")
+
+studs2 <- studs%>%
+  filter(Teacher_Quality != "")
+
+studs2$Teacher_Quality <- factor(studs2$Teacher_Quality, levels = c("Low", "Medium", "High"))
+studs2$Motivation_Level <- factor(studs2$Motivation_Level, levels = c("Low", "Medium", "High"))
+
+
+model <- aov(Exam_Score ~ Motivation_Level + Teacher_Quality + Motivation_Level * Teacher_Quality, data = studs2)
+
+cat("\n\nANOVA Table for Model:")
+cat("\n=========================================================================\n")
+summary(model)
+
+Tukey <- TukeyHSD(model)
+
+cat("\n\nTukeyHSD Results for Motivation Level:")
+cat("\n=======================================================\n")
+Tukey$Motivation_Level
+cat("\n\nTukeyHSD Results for Teacher Quality:")
+cat("\n======================================================\n")
+Tukey$Teacher_Quality
+
+interaction.plot(studs2$Teacher_Quality, studs2$Motivation_Level, studs2$Exam_Score, fun = mean, xlab = "Teacher Quality", ylab = "Mean Exam Score", 
+                 main = "Interaction Between Motivation Level and Teacher Quality", trace.label = "Motivation Level", col = c("red", "green", "blue"))
+
+```
+
+
+
+
+
